@@ -1,0 +1,146 @@
+Foguete: 
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Dados fornecidos
+u = 200  # m/s
+M0 = 1600  # kg
+g = 9.8  # m/s^2
+c = 27  # kg/s
+v_target = 100  # m/s
+
+# Função que define a velocidade do foguete
+def velocidade_foguete(t):
+    return u * np.log(M0 / (M0 - c * t)) - g * t - v_target
+
+# Implementando o método da bisseção
+def bissecao(func, a, b, tol):
+    iteracoes = []
+    while (b - a) / 2.0 > tol:
+        midpoint = (a + b) / 2.0
+        iteracoes.append(midpoint)
+        if func(midpoint) == 0:
+            return midpoint, iteracoes
+        elif func(a) * func(midpoint) < 0:
+            b = midpoint
+        else:
+            a = midpoint
+    return (a + b) / 2.0, iteracoes
+
+# Intervalo inicial e tolerância
+a = 6
+b = 8
+tol = 0.008
+
+# Calculando a raiz e as iterações
+raiz, iteracoes = bissecao(velocidade_foguete, a, b, tol)
+
+# Gerando gráfico das iterações
+plt.figure(figsize=(10, 6))
+plt.plot(iteracoes, label='Aproximação da Raiz')
+plt.xlabel('Número de Iterações')
+plt.ylabel('Tempo (s)')
+plt.title('Método da Bisseção - Aproximação do Tempo para v = 100 m/s')
+plt.axhline(raiz, color='r', linestyle='--', label=f'Raiz Aproximada = {raiz:.5f}')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+print(f"Raiz aproximada (tempo): {raiz:.5f} segundos")
+
+
+Cabo Telefônico: import numpy as np
+import matplotlib.pyplot as plt
+
+# Dados fornecidos
+S = 32  # comprimento do cabo em metros
+L = 30  # distância entre os postes em metros
+alpha = 0.10  # kgf
+
+# Função que define a equação para a tensão
+def equacao_tensao(T):
+    return np.sinh(alpha * S / (2 * T)) - (T / alpha) * (L / S)
+
+# Implementando o método da bisseção
+def bissecao_tensao(func, a, b, tol):
+    iteracoes = []
+    while (b - a) / 2.0 > tol:
+        midpoint = (a + b) / 2.0
+        iteracoes.append(midpoint)
+        if func(midpoint) == 0:
+            return midpoint, iteracoes
+        elif func(a) * func(midpoint) < 0:
+            b = midpoint
+        else:
+            a = midpoint
+    return (a + b) / 2.0, iteracoes
+
+# Intervalo inicial e tolerância
+a_tensao = 2
+b_tensao = 3
+tol_tensao = 0.01
+
+# Calculando a raiz e as iterações
+raiz_tensao, iteracoes_tensao = bissecao_tensao(equacao_tensao, a_tensao, b_tensao, tol_tensao)
+
+# Gerando gráfico das iterações
+plt.figure(figsize=(10, 6))
+plt.plot(iteracoes_tensao, label='Aproximação da Raiz')
+plt.xlabel('Número de Iterações')
+plt.ylabel('Tensão (kgf)')
+plt.title('Método da Bisseção - Aproximação da Tensão no Cabo Telefônico')
+plt.axhline(raiz_tensao, color='r', linestyle='--', label=f'Raiz Aproximada = {raiz_tensao:.5f}')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+print(f"Raiz aproximada (tensão): {raiz_tensao:.5f} kgf")
+
+
+Juros: import numpy as np
+import matplotlib.pyplot as plt
+
+# Dados fornecidos
+F = 2499.00  # valor financiado
+P = 249.00   # valor da parcela
+n = 12       # número de parcelas
+
+# Definindo a função para calcular a taxa de juros
+def calcular_taxa_juros(F, P, n):
+    def f(i):
+        return P - (F * i) / (1 - (1 + i)**-n)
+    
+    i_inicial = 0.01
+    i_final = 0.1
+    passo = 0.0001
+    taxas = np.arange(i_inicial, i_final, passo)
+    
+    erros = [f(i) for i in taxas]
+    taxa_de_juros = taxas[np.argmin(np.abs(erros))]
+    
+    return taxa_de_juros
+
+# Calculando a taxa de juros
+taxa_de_juros = calcular_taxa_juros(F, P, n)
+
+# Gerando dados para os gráficos com maior resolução
+taxas_finas = np.linspace(0.01, 0.1, 10000)
+erros_finos = [P - (F * i) / (1 - (1 + i)**-n) for i in taxas_finas]
+
+# Melhorando o gráfico do erro em função da taxa de juros
+plt.figure(figsize=(12, 8))
+plt.plot(taxas_finas, erros_finos, label='Erro', color='blue')
+plt.axhline(0, color='red', linestyle='--', label='Erro Zero')
+plt.axvline(taxa_de_juros, color='green', linestyle='--', label=f'Taxa de Juros Aproximada = {taxa_de_juros:.4f}')
+plt.xlabel('Taxa de Juros')
+plt.ylabel('Erro')
+plt.title('Erro em função da Taxa de Juros')
+plt.legend(loc='best')
+plt.grid(True, which='both', linestyle='--', linewidth=0.5)
+plt.xticks(np.arange(0.01, 0.11, 0.01))
+plt.yticks(np.arange(-100, 150, 50))
+plt.tight_layout()
+plt.show()
+
+print(f"Taxa de Juros Aproximada: {taxa_de_juros:.4f}")
